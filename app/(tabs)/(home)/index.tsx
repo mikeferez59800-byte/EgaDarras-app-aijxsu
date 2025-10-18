@@ -1,79 +1,40 @@
+
 import React from "react";
 import { Stack, Link } from "expo-router";
-import { FlatList, Pressable, StyleSheet, View, Text, Alert, Platform } from "react-native";
+import { ScrollView, Pressable, StyleSheet, View, Text, Platform } from "react-native";
 import { IconSymbol } from "@/components/IconSymbol";
-import { GlassView } from "expo-glass-effect";
-import { useTheme } from "@react-navigation/native";
-
-const ICON_COLOR = "#007AFF";
+import { colors, commonStyles } from "@/styles/commonStyles";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function HomeScreen() {
-  const theme = useTheme();
-  const modalDemos = [
+  const sections = [
     {
-      title: "Standard Modal",
-      description: "Full screen modal presentation",
-      route: "/modal",
-      color: "#007AFF",
+      title: "Consentement",
+      description: "Comprendre et respecter le consentement dans toutes les situations",
+      route: "/(tabs)/consent",
+      color: colors.primary,
+      icon: "hand.raised.fill",
     },
     {
-      title: "Form Sheet",
-      description: "Bottom sheet with detents and grabber",
-      route: "/formsheet",
-      color: "#34C759",
+      title: "Égalité Hommes-Femmes",
+      description: "Promouvoir l'égalité des genres dans tous les aspects de la vie",
+      route: "/(tabs)/equality",
+      color: colors.secondary,
+      icon: "equal.circle.fill",
     },
     {
-      title: "Transparent Modal",
-      description: "Overlay without obscuring background",
-      route: "/transparent-modal",
-      color: "#FF9500",
-    }
+      title: "Stéréotypes",
+      description: "Identifier et déconstruire les stéréotypes de genre",
+      route: "/(tabs)/stereotypes",
+      color: colors.accent,
+      icon: "person.2.fill",
+    },
   ];
 
-  const renderModalDemo = ({ item }: { item: (typeof modalDemos)[0] }) => (
-    <GlassView style={[
-      styles.demoCard,
-      Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }
-    ]} glassEffectStyle="regular">
-      <View style={[styles.demoIcon, { backgroundColor: item.color }]}>
-        <IconSymbol name="square.grid.3x3" color="white" size={24} />
-      </View>
-      <View style={styles.demoContent}>
-        <Text style={[styles.demoTitle, { color: theme.colors.text }]}>{item.title}</Text>
-        <Text style={[styles.demoDescription, { color: theme.dark ? '#98989D' : '#666' }]}>{item.description}</Text>
-      </View>
-      <Link href={item.route as any} asChild>
-        <Pressable>
-          <GlassView style={[
-            styles.tryButton,
-            Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.08)' }
-          ]} glassEffectStyle="clear">
-            <Text style={[styles.tryButtonText, { color: theme.colors.primary }]}>Try It</Text>
-          </GlassView>
-        </Pressable>
-      </Link>
-    </GlassView>
-  );
-
   const renderHeaderRight = () => (
-    <Pressable
-      onPress={() => Alert.alert("Not Implemented", "This feature is not implemented yet")}
-      style={styles.headerButtonContainer}
-    >
-      <IconSymbol name="plus" color={theme.colors.primary} />
-    </Pressable>
-  );
-
-  const renderHeaderLeft = () => (
-    <Pressable
-      onPress={() => Alert.alert("Not Implemented", "This feature is not implemented yet")}
-      style={styles.headerButtonContainer}
-    >
-      <IconSymbol
-        name="gear"
-        color={theme.colors.primary}
-      />
-    </Pressable>
+    <View style={styles.headerButtonContainer}>
+      <IconSymbol name="info.circle" color={colors.primary} size={24} />
+    </View>
   );
 
   return (
@@ -81,81 +42,188 @@ export default function HomeScreen() {
       {Platform.OS === 'ios' && (
         <Stack.Screen
           options={{
-            title: "Building the app...",
+            title: "EgaDarras 🩷",
             headerRight: renderHeaderRight,
-            headerLeft: renderHeaderLeft,
           }}
         />
       )}
-      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-        <FlatList
-          data={modalDemos}
-          renderItem={renderModalDemo}
-          keyExtractor={(item) => item.route}
+      <View style={[commonStyles.container]}>
+        <ScrollView
           contentContainerStyle={[
-            styles.listContainer,
-            Platform.OS !== 'ios' && styles.listContainerWithTabBar
+            styles.scrollContent,
+            Platform.OS !== 'ios' && styles.scrollContentWithTabBar
           ]}
-          contentInsetAdjustmentBehavior="automatic"
           showsVerticalScrollIndicator={false}
-        />
+        >
+          <View style={styles.header}>
+            <Text style={styles.headerTitle}>EgaDarras 🩷</Text>
+            <Text style={styles.headerSubtitle}>
+              Apprendre ensemble pour un monde plus égalitaire
+            </Text>
+          </View>
+
+          <View style={styles.statsContainer}>
+            <View style={styles.statCard}>
+              <Text style={styles.statNumber}>60+</Text>
+              <Text style={styles.statLabel}>Activités</Text>
+            </View>
+            <View style={styles.statCard}>
+              <Text style={styles.statNumber}>3</Text>
+              <Text style={styles.statLabel}>Thèmes</Text>
+            </View>
+            <View style={styles.statCard}>
+              <Text style={styles.statNumber}>100%</Text>
+              <Text style={styles.statLabel}>Gratuit</Text>
+            </View>
+          </View>
+
+          <View style={styles.sectionsContainer}>
+            {sections.map((section, index) => (
+              <Link key={index} href={section.route as any} asChild>
+                <Pressable style={styles.sectionCard}>
+                  <LinearGradient
+                    colors={[section.color, section.color + 'CC']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.sectionGradient}
+                  >
+                    <View style={styles.sectionIconContainer}>
+                      <IconSymbol name={section.icon as any} color="#FFFFFF" size={32} />
+                    </View>
+                    <View style={styles.sectionContent}>
+                      <Text style={styles.sectionTitle}>{section.title}</Text>
+                      <Text style={styles.sectionDescription}>{section.description}</Text>
+                    </View>
+                    <IconSymbol name="chevron.right" color="#FFFFFF" size={20} />
+                  </LinearGradient>
+                </Pressable>
+              </Link>
+            ))}
+          </View>
+
+          <View style={styles.infoSection}>
+            <Text style={styles.infoTitle}>À propos d&apos;EgaDarras</Text>
+            <Text style={styles.infoText}>
+              EgaDarras est une application pédagogique conçue pour sensibiliser aux questions 
+              de consentement, d&apos;égalité hommes-femmes et de stéréotypes de genre. 
+              À travers des jeux, des questionnaires et des exemples de situations réelles, 
+              vous développerez une meilleure compréhension de ces enjeux essentiels.
+            </Text>
+          </View>
+        </ScrollView>
       </View>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    // backgroundColor handled dynamically
-  },
-  listContainer: {
-    paddingVertical: 16,
+  scrollContent: {
+    paddingVertical: 20,
     paddingHorizontal: 16,
   },
-  listContainerWithTabBar: {
-    paddingBottom: 100, // Extra padding for floating tab bar
+  scrollContentWithTabBar: {
+    paddingBottom: 100,
   },
-  demoCard: {
+  header: {
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  headerTitle: {
+    fontSize: 32,
+    fontWeight: '800',
+    color: colors.primary,
+    marginBottom: 8,
+  },
+  headerSubtitle: {
+    fontSize: 16,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    paddingHorizontal: 20,
+  },
+  statsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 24,
+    gap: 12,
+  },
+  statCard: {
+    flex: 1,
+    backgroundColor: colors.card,
     borderRadius: 12,
     padding: 16,
-    marginBottom: 12,
+    alignItems: 'center',
+    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.06)',
+    elevation: 2,
+  },
+  statNumber: {
+    fontSize: 24,
+    fontWeight: '800',
+    color: colors.primary,
+    marginBottom: 4,
+  },
+  statLabel: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    textAlign: 'center',
+  },
+  sectionsContainer: {
+    marginBottom: 24,
+  },
+  sectionCard: {
+    marginBottom: 16,
+    borderRadius: 16,
+    overflow: 'hidden',
+    boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+    elevation: 4,
+  },
+  sectionGradient: {
     flexDirection: 'row',
     alignItems: 'center',
+    padding: 20,
   },
-  demoIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+  sectionIconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
   },
-  demoContent: {
+  sectionContent: {
     flex: 1,
   },
-  demoTitle: {
-    fontSize: 18,
-    fontWeight: '600',
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#FFFFFF',
     marginBottom: 4,
-    // color handled dynamically
   },
-  demoDescription: {
+  sectionDescription: {
     fontSize: 14,
-    lineHeight: 18,
-    // color handled dynamically
+    color: 'rgba(255, 255, 255, 0.9)',
+    lineHeight: 20,
+  },
+  infoSection: {
+    backgroundColor: colors.card,
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 20,
+    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.06)',
+    elevation: 2,
+  },
+  infoTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: colors.text,
+    marginBottom: 12,
+  },
+  infoText: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    lineHeight: 22,
   },
   headerButtonContainer: {
     padding: 6,
-  },
-  tryButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 6,
-  },
-  tryButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-    // color handled dynamically
   },
 });
